@@ -776,10 +776,10 @@ Definition manual_grade_for_binary_inverse_b : option (nat*string) := None.
         proof -- that will allow the main proof to make progress.) Don't
         define this using [nat_to_bin] and [bin_to_nat]! *)
 
-Fixpoint bin_double (b : bin) : bin :=
+Definition bin_double (b : bin) : bin :=
   match b with
   | Z => Z
-  | c => B0 c
+  | b' => B0 b'
   end.
 
 Fixpoint normalize (b:bin) : bin :=
