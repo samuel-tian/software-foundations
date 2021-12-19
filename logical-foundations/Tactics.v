@@ -73,7 +73,10 @@ Theorem silly_ex : forall p,
   even p = true ->
   odd (S p) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros p eq1 eq2 eq3.
+  apply eq2. apply eq1. apply eq3.
+Qed.
+
 (** [] *)
 
 (** To use the [apply] tactic, the (conclusion of the) fact
@@ -105,11 +108,23 @@ Proof.
     it may not find earlier lemmas if they were posed as optional
     problems and you chose not to finish the proofs). *)
 
+Theorem rev_injective : forall (l1 l2 : list nat), rev l1 = rev l2 -> l1 = l2.
+Proof.
+  intros l1 l2 H.
+  assert (Hrev : l1 = rev (rev l1)).
+  { rewrite -> rev_involutive. reflexivity. }
+  rewrite -> Hrev. rewrite -> H.
+  rewrite -> rev_involutive. reflexivity.
+Qed.
+
 Theorem rev_exercise1 : forall (l l' : list nat),
   l = rev l' ->
   l' = rev l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l l' eq. apply rev_injective. rewrite -> rev_involutive.
+  symmetry. apply eq.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (apply_rewrite)
@@ -119,7 +134,7 @@ Proof.
     applied? *)
 
 (* FILL IN HERE
-
+   skip
     [] *)
 
 (* ################################################################# *)
@@ -192,7 +207,11 @@ Example trans_eq_exercise : forall (n m o p : nat),
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m o p eq1 eq2.
+  transitivity m.
+  apply eq2. apply eq1.
+Qed.
+
 (** [] *)
 
 (* ################################################################# *)
@@ -279,7 +298,13 @@ Example injection_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   j = z :: l ->
   x = y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x y z l j eq1 eq2.
+  injection eq1 as H1 H2.
+  assert (H: y :: l = z :: l).
+  { rewrite -> H2. apply eq2. }
+  injection H as H'. rewrite -> H'. apply H1.
+Qed.
+
 (** [] *)
 
 (** So much for injectivity of constructors.  What about disjointness? *)
@@ -327,7 +352,7 @@ Example discriminate_ex3 :
     x :: y :: l = [] ->
     x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x y z l j contra. discriminate contra. Qed.
 (** [] *)
 
 (** For a slightly more involved example, we can use [discriminate] to
@@ -593,7 +618,14 @@ Proof.
 Theorem eqb_true : forall n m,
   n =? m = true -> n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n'].
+  { intros m eq. apply eqb_0_l in eq. symmetry. apply eq. }
+  { intros m. destruct m as [| m'].
+    { discriminate. }
+    { simpl. intros eq. apply eq_implies_succ_equal. apply IHn'. apply eq. }
+  }
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (eqb_true_informal)
@@ -601,7 +633,7 @@ Proof.
     Give a careful informal proof of [eqb_true], being as explicit
     as possible about quantifiers. *)
 
-(* FILL IN HERE *)
+(* skip *)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_informal_proof : option (nat*string) := None.
