@@ -480,7 +480,9 @@ Definition manual_grade_for_double_neg_inf : option (nat*string) := None.
 Theorem contrapositive : forall (P Q : Prop),
   (P -> Q) -> (~Q -> ~P).
 Proof.
-  intros P Q. 
+  intros P Q H HQ. unfold not. unfold not in HQ. intros HP.
+  apply HQ. apply H. apply HP.
+Qed.
   
 (** [] *)
 
@@ -488,7 +490,10 @@ Proof.
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P. unfold not. intros H. destruct H.
+  apply H0. apply H.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP)
@@ -496,7 +501,7 @@ Proof.
     Write an informal proof (in English) of the proposition [forall P
     : Prop, ~(P /\ ~P)]. *)
 
-(* FILL IN HERE *)
+(* skip *)
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_informal_not_PNP : option (nat*string) := None.
@@ -628,19 +633,40 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P. split.
+  - intros H. apply H.
+  - intros H. apply H.
+Qed.
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R H1 H2. split.
+  - intros HP. apply H2. apply H1. apply HP.
+  - intros HR. apply H1. apply H2. apply HR.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (or_distributes_over_and) *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R. split.
+  { intros H. destruct H.
+    { split.
+      - apply or_introl. apply H.
+      - apply or_introl. apply H. }
+    { split. destruct H as [H1 H2].
+      apply or_commut. apply or_introl. apply H1.
+      destruct H as [H1 H2]. apply or_commut. apply or_introl. apply H2. } }
+  { intros H. destruct H as [H1 H2]. destruct H1 as [H1 | H1'].
+    { left. apply H1. }
+    { destruct H2 as [H2 | H2'].
+      - left. apply H2.
+      - right. apply and_intro. apply H1'. apply H2'. } }
+Qed.
+        
 (** [] *)
 
 (* ================================================================= *)
